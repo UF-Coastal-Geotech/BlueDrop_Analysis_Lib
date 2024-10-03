@@ -877,8 +877,9 @@ class Drop:
         bearing_col_name = self.make_qDyn_name(area_type)
 
         # Check that the water drop value is set
-        if self.water_drop is None:
-            raise ValueError("To calculate the dynamic bearing capacity the flag for deciding if the drop is in water or not must be set")
+        if not isinstance(self.water_drop, bool):
+            raise ValueError("To calculate the dynamic bearing capacity the flag for deciding if the drop is in water or not must be set\n \
+                             The possible Values are True (for water drop) and False (for not a water drop)")
         
         contact_area = self.bearing_dfs[area_type][contact_area_col_name]
         
