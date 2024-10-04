@@ -827,7 +827,7 @@ class Drop:
         # Store the column in the df
         self.bearing_dfs[area_type][col_name] = quasi_static_bearing
     
-    def calc_drop_dynamic_bearing(self, area_type, gravity = GRAVITY_CONST, rho_water = 1020, rho_air = 1.293, drag_coeff = 1.0):
+    def calc_drop_dynamic_bearing(self, area_type, gravity = GRAVITY_CONST, rho_water = 1020, rho_air = 1.293, drag_coeff = 0.0):
         """
         Calculate the dynamic bearing capacity (qsbc) for the drop and store it in the selected bearing DataFrame.
 
