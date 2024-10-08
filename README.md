@@ -23,7 +23,10 @@ The necessary downloads to use this code are:
 
 ### Steps to get started with BlueDrop Analysis Lib
 
-1) Clone the repo to a local folder using the following command in your terminal: ```git clone https://github.com/UF-Coastal-Geotech/BlueDrop_Analysis_Lib.git```
+1) Clone the repo to a local folder using the following command in your terminal: 
+```git
+git clone https://github.com/UF-Coastal-Geotech/BlueDrop_Analysis_Lib.git
+```
 
 2) Use VS Code to open the newly cloned ```BlueDrop_Analysis_Lib``` folder
 
@@ -31,21 +34,26 @@ The necessary downloads to use this code are:
 
 4) On ```Windows``` open the ```Anaconda Prompt``` or on ```Linux``` open a terminal of your choice that has conda added to it.
 
-#### Note
 The purpose of the next couple of steps are to use ```conda``` and the ```environment.yml``` file to install all the necessary packages and modules to run the all the functions in the library.
 
 5) Using the terminal change your working directory to the ```BlueDrop_Analysis_Lib``` folder. 
 
-6a) If on windows run the following command in the ```conda``` terminal: 
-```conda env create --file environment_win.yml --name PFFP_Analysis```
+6) The following is the command is the command to create the conda environment
 
-6b) If on linux run the following command:
-```conda env create --file environment.yml```
+    If on windows run the following command in the ```conda``` terminal: 
+    ```python
+    conda env create --file environment_win.yml --name PFFP_Analysis
+    ```
+
+    If on linux run the following command:
+    ```conda
+    conda env create --file environment.yml
+    ```
 
 Installing the packages may take a few minutes.
 
-8)  Activate the ```PFFP_Analysis``` ```conda``` environment. 
+7)  Activate the ```PFFP_Analysis``` ```conda``` environment. 
     * The easiest way to do this in VS Code is to try running a cell in ```Example_PFFP_walkthrough.ipynb```. VS Code should ask you which kernel you want to use. Choose ```Python Environments``` > ```PFFP_Analysis```
 
-9)  Once the Python Kernel is selected and the cells in ```Example_PFFP_walkthrough.ipynb``` are running you are good to go.
+8)  Once the Python Kernel is selected and the cells in ```Example_PFFP_walkthrough.ipynb``` are running you are good to go.
 
