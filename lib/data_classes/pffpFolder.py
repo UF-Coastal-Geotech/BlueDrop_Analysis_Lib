@@ -142,6 +142,8 @@ class pffpDataFolder(Folder):
         # Select those columns of the df
         self.calibration_params = data[["Sensor", offset_string, scale_string]]
 
+        # TODO: Might be able to add another column here for the horizontal offset
+        
     def store_pffp_files(self, recursive = False, subfolder = ""):
         """
         Store PFFP binary files found in the directory.

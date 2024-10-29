@@ -479,6 +479,11 @@ class Drop:
 
         return self.peak_index + index[point_index]
     
+    def update_drop_units(self, input_units):
+        """Update the units inside of the drop"""
+        
+        self.units.update(input_units)
+    
     def cut_accel_data(self, accel, time, input_units = {"accel":"g", "Time":"min"}):
         """
         Store and process sensor data for the selected drop region.
@@ -525,7 +530,7 @@ class Drop:
         >>> drop.cut_accel_data(accel, time, {"accel": "g", "Time": "min"})
         """
 
-        # Store the units of the acceleration and time
+                # Store the units of the acceleration and time
         self.units.update(input_units)
 
         # Store the time in the drop
@@ -533,7 +538,7 @@ class Drop:
 
         # Change the time units
         self.units["Time"] = "s"
-
+        
         if not self.manually_processed:
             # Get the end of the impulse
             end_drop_index = self.get_impulse_end(accel, high_tol = 1.05)
@@ -1068,7 +1073,7 @@ class Drop:
         self.bearing_dfs[area_type][col_name] = contact_area
     
     # Plotting functions
-    def quick_view_impulse(self, interactive = True, figsize= [12, 8], legend = False):
+    def quick_view_impulse(self, interactive = True, figsize= [12, 8], legend = False, **kwargs):
         """
         Provide a quick view of impulse data through visualizations.
 
@@ -1107,7 +1112,7 @@ class Drop:
         time_units=  self.units["Time"]
 
         if interactive:
-            fig = make_subplots(rows = 3, cols = 1, shared_xaxes = True)
+            fig = make_subplots(rows = 3, cols = 1, shared_xaxes = True, **kwargs)
 
             fig.add_trace(
                 go.Scatter(x = time, y= accel, mode = "lines", name = "Acceleration"),
@@ -1142,7 +1147,7 @@ class Drop:
             fig.show()
         else:
             # Use matplotlib
-            fig, axs = plt.subplots(ncols = 1, nrows = 3, figsize = (figsize[0], figsize[1]))
+            fig, axs = plt.subplots(ncols = 1, nrows = 3, figsize = (figsize[0], figsize[1]), **kwargs)
 
             axs[0].plot(time, accel, label = f"acceleration {accel_units}")
             axs[1].plot(time, vel, label = f"velocity {vel_units}")

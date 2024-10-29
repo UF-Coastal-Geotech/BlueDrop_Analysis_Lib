@@ -295,9 +295,6 @@ class pffpFile(BinaryFile):
         self.drops = []
          
         self.funky = False
-        
-        # list to track if there's a problem with processing
-        check_status = [0, 0]
 
         # Load the file df - Might be able to only load the part of the files I want in the future
         # Skip some sections of the binary file and only load the sensor that I need
@@ -309,11 +306,18 @@ class pffpFile(BinaryFile):
         self.stitch_accelerometers(df, accel_labels = select_accel)
 
         # Init flag to track if the drop was checked using pressure sensor
-        pressure_check_list = []
+        pressure_check = None
 
         # TODO: Need to turn this into multiple functions
         # if use_pore_pressure and np.max(df["pore_pressure"] > 1):
+        # TODO: The tolerances set in this function are unit dependent. Need to set a constant for the tolerance and scale 
+        # them based on the units being used for the analysis
+
         if use_pore_pressure and np.max(df["pore_pressure"] > 0.5):
+            
+            # Set the flag that says pressure check is being done
+            pressure_check = True
+
             # Init list to store accel indices that need to be deleted
             index_2_delete = []
 
@@ -332,7 +336,7 @@ class pffpFile(BinaryFile):
                 percentage_tol = 0.4
                 min_height = max(percentage_tol * max_accel, min_2g)
                 
-            #TODO: For the time being just check the 18g sensor in the future multiple sens
+            # Check the concanted accelerations for a drop
             peak_indexs, peak_info, num_accel_drops = find_drops(self.concat_accel, min_peak_height=min_height, impact_time_tol = 0.03)
 
             # Select the times where the peak acceleration thinks drops occured
@@ -362,6 +366,7 @@ class pffpFile(BinaryFile):
                 elif len(matching_index) > 1:
                     print(f"Warning: Multiple acceleration evaluated to the same pore pressure drop predictor {self.file_name}")
                     self.funky = True
+
             # Delete the indices
             peak_indexs = np.delete(peak_indexs, index_2_delete)
 
@@ -370,24 +375,23 @@ class pffpFile(BinaryFile):
                 print("Num pressure drops: ", num_pressure_drops)
                 print(f"Warning: Number of predicted drops should match {self.file_name}")
                 self.funky = True
-            pressure_check_list.append(True)
             
         else:
+            # Pressure check isn't being used
+            pressure_check = False
+
             # Use the concatenated accleration sensor data to fund the drops
             peak_indexs, peak_info, num_accel_drops = find_drops(self.concat_accel)
 
             # Select the times where the peak acceleration thinks drops occured
             time_peak_acceleration = np.array(df["Time"])[peak_indexs]
 
-            pressure_check_list.append(False)
-
-        self.num_drops = num_accel_drops
+        # Init the number of drops to zero
+        self.num_drops = 0
 
         for i, index in enumerate(peak_indexs):
-            drop = Drop(containing_file= self.file_name, peak_index = index, file_drop_index= i+1, peak_info = peak_info, pressure_check = pressure_check_list)
-                    
-            # Add the drop to the list
-            self.drops.append(drop)
+            drop = Drop(containing_file= self.file_name, peak_index = index, file_drop_index= i+1, peak_info = peak_info, pressure_check = pressure_check)
+            self.append_drop(drop)
 
         # Check if the df should be stored
         if  store_df:
@@ -397,6 +401,46 @@ class pffpFile(BinaryFile):
             # Set the tracker flag to false
             self.df_stored = True
     
+    def append_drop(self, drop):
+        """
+        Add a drop to the file object. This is useful for the automatic process and manually adding a drop
+        """
+
+        # Increment the number of drops
+        self.num_drops += 1
+
+        # Store the drop object in the file's list
+        self.drops.append(drop)
+
+    def manually_add_drop(self, peak_index, file_drop_index, peak_info, pressure_check):
+        """
+        Function to manually add a drop to the file object. This covers all the initialization steps that are necessary to make sure the drop has all of the information it needs to work
+        """
+
+        # Check if the df is stored
+        if self.df_stored:
+            # Temporarily store the df
+            df = self.df
+        else: 
+            # Load the df
+            df = self.binary_2_sensor_df(acceleration_unit = self.sensor_units["accel"], pressure_unit = self.sensor_units["pressure"], time_unit= self.sensor_units["Time"])
+
+        # Create the drop
+        drop = Drop(containing_file= self.file_name, peak_index = peak_index, file_drop_index= file_drop_index, peak_info = peak_info, pressure_check = pressure_check)
+
+
+        # Need to add the time data so that the manual selection works
+        drop.time= df["Time"]
+
+        # Update the drop units
+        drop.units.update(self.sensor_units)
+
+        # Make sure the drop is is set to being not processed
+        drop.processed = False
+
+        # Create the drop, increment the number of drops and add it to the list
+        self.append_drop(drop)
+
     def process_drops(self):
         """
         Process the identified drops in the file by integrating acceleration data.
@@ -811,7 +855,7 @@ class pffpFile(BinaryFile):
         drop.manually_processed = True
 
     # Plotting functions
-    def quick_view(self, interactive = False, figsize = [12, 8], legend = False):
+    def quick_view(self, fig = None, axs = None, interactive = False, figsize = [12, 8], legend = False, show = True, **kwargs):
         """
         Provide a quick view of the file data by plotting accelerometer, pore pressure, and tilt sensor data.
 
@@ -849,7 +893,9 @@ class pffpFile(BinaryFile):
         pressure_unit = self.sensor_units["pressure"]
         
         if interactive:
-            fig = make_subplots(rows = 3, cols = 1, shared_xaxes = True)
+            # Create the figure if no figure is passed
+            if fig is None: 
+                fig = make_subplots(rows = 3, cols = 1, shared_xaxes = True, **kwargs)
 
             # Accelerometer plots
             for label in accel_labels:
@@ -884,10 +930,16 @@ class pffpFile(BinaryFile):
                             title_text=f"File Name: {self.file_name}")
 
             # Show the plot interactivity
-            fig.show()
+            if show:
+                fig.show()
         else:
-            # Use matplotlib
-            fig, axs = plt.subplots(ncols = 1, nrows = 3, figsize = (figsize[0], figsize[1]))
+            if fig is None and axs is None:
+                # Use matplotlib
+                fig, axs = plt.subplots(ncols = 1, nrows = 3, figsize = (figsize[0], figsize[1]), **kwargs)
+            elif fig is None or axs is None:
+                # Raise an error if figure or axs is set to None. This means that the user set one but not the other.
+                raise ValueError("Both figure and axs must be set to matplotlib objects or None")
+            
 
             # Accelerometers
             for label in accel_labels:
@@ -920,7 +972,10 @@ class pffpFile(BinaryFile):
             fig.suptitle(f"File Name: {self.file_name}")
 
             plt.tight_layout()
-            plt.show()
+            
+            # Flag for showing the figure. This means that the figure isn't available for saving
+            if show:
+                plt.show()
 
     def plot_drop_impulses(self, figsize = [4,6], save_figs = False, hold = False, legend = True,
                             colors = ["black", "blue", "green", "orange", "purple", "brown"],
