@@ -538,7 +538,9 @@ class Drop:
 
         # Change the time units
         self.units["Time"] = "s"
-        
+
+        # If not manually processed the release, and impulse indices need to be found
+        # Otherwise the indices have already been found and this if statement can be skipped
         if not self.manually_processed:
             # Get the end of the impulse
             end_drop_index = self.get_impulse_end(accel, high_tol = 1.05)

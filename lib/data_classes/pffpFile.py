@@ -391,7 +391,7 @@ class pffpFile(BinaryFile):
 
         for i, index in enumerate(peak_indexs):
             drop = Drop(containing_file= self.file_name, peak_index = index, file_drop_index= i+1, peak_info = peak_info, pressure_check = pressure_check)
-            self.append_drop(drop)
+            self.insert_drop(drop)
 
         # Check if the df should be stored
         if  store_df:
@@ -401,7 +401,7 @@ class pffpFile(BinaryFile):
             # Set the tracker flag to false
             self.df_stored = True
     
-    def append_drop(self, drop):
+    def insert_drop(self, drop, index = None):
         """
         Add a drop to the file object. This is useful for the automatic process and manually adding a drop
         """
@@ -409,9 +409,18 @@ class pffpFile(BinaryFile):
         # Increment the number of drops
         self.num_drops += 1
 
-        # Store the drop object in the file's list
-        self.drops.append(drop)
-
+        # If no index is set, append the drop to the end of the list
+        if index is None:
+            # Store the drop object in the file's list
+            self.drops.append(drop)
+        elif isinstance(index, int):
+            # Add the drop to a specific location in the list
+            # If the index is greater than the length of the list python just adds the element to the end of the list.
+            # eg. if index is 100 and the length of the list is 2, the drop will be added at drop_list[2] making the length of the list 3
+            self.drops.insert(index, drop)
+        else:
+            raise TypeError(f"The type of index is {type(index)}. The type should be None or int")
+        
     def manually_add_drop(self, peak_index, file_drop_index, peak_info, pressure_check):
         """
         Function to manually add a drop to the file object. This covers all the initialization steps that are necessary to make sure the drop has all of the information it needs to work
@@ -439,8 +448,28 @@ class pffpFile(BinaryFile):
         drop.processed = False
 
         # Create the drop, increment the number of drops and add it to the list
-        self.append_drop(drop)
+        self.insert_drop(drop, index = file_drop_index -1)
 
+        # Loop over the drops and make sure the drop index is set to the right order
+        self.reset_drop_index()
+
+    def reset_drop_index(self, reset_type = "normal"):
+        """
+        Loop over the drops and reset the file indices
+        """
+        allowed_reset_types = ["normal"]
+
+        # check if the 
+        if reset_type in allowed_reset_types:
+            match reset_type:
+                case "normal":
+                    for i, drop in enumerate(self.drops):
+                        drop.file_drop_index = i+1
+                case _:
+                    raise IndexError(f"Don't know how you made it here but the reset_type value is {reset_type}")
+        else: 
+            raise ValueError(f"Allowed reset types are {allowed_reset_types}")
+        
     def process_drops(self):
         """
         Process the identified drops in the file by integrating acceleration data.
