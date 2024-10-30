@@ -46,6 +46,7 @@ def calc_Jamiolkowski_relative_density(qNet_dry, depth, soil_unit_wt = 17.81, wa
 
     Parameters
     ----------
+
     qNet_dry : float
         Net drained bearing resistance [kPa].
     depth : float
@@ -65,6 +66,7 @@ def calc_Jamiolkowski_relative_density(qNet_dry, depth, soil_unit_wt = 17.81, wa
 
     Returns
     -------
+    
     float
         Relative density (I_d).
 

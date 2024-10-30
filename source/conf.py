@@ -24,7 +24,8 @@ def add_subdirectories_to_path(directory):
 # Add the 'lib' directory and all its subdirectories to the Python path
 add_subdirectories_to_path(os.path.abspath('..'))
 # sys.path.insert(0, os.path.abspath('../lib'))
-
+print("Current working dir:", os.getcwd())
+print("system path: \n", sys.path)
 
 extensions = [
     'sphinx.ext.autodoc',

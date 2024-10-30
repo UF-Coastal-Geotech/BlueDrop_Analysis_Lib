@@ -3,13 +3,34 @@ from scipy.signal import find_peaks
 
 def find_drops(accel_data, impact_time_tol = 0.015, sample_freq = 120_000, min_peak_height = 2.8):
     """
-    Purpose: Get the number of drops in the a file by findng the peaks in the data
-    
-    where:
-        accel_data: array of acceleration data
-        impact_time_tol: the assumed minimum time between drops
-        sample_freq: Number of samples collected in a minute
-        min_peak_height: Minimum acceleration measurement that should be considered a drop (Measured in g's) 
+    Detects the number of drops in the acceleration data by identifying peaks.
+
+    Parameters
+    ----------
+
+    accel_data : np.ndarray
+        Array of acceleration data.
+    impact_time_tol : float, optional
+        The assumed minimum time between drops, in seconds. Default is 0.015.
+    sample_freq : int, optional
+        Number of samples collected per minute. Default is 120,000.
+    min_peak_height : float, optional
+        Minimum acceleration measurement to be considered a drop, measured in g's. Default is 2.8.
+
+    Returns
+    -------
+
+    tuple
+        A tuple containing:
+        - drop_indexs (np.ndarray): Indices of detected drops in the acceleration data.
+        - drop_info (dict): Information about the detected drops, including peak heights.
+        - num_drops (int): The number of detected drops.
+
+    Notes
+    -----
+
+    The function uses the `find_peaks` method from `scipy.signal` to identify peaks in the acceleration data.
+    The impact window is calculated based on the `impact_time_tol` and `sample_freq`.
     """
         
     # Calc assumed tolerance for the length of impact
@@ -23,11 +44,28 @@ def find_drops(accel_data, impact_time_tol = 0.015, sample_freq = 120_000, min_p
 
 def check_peaks_in_data(accel_data, height_range = 2.8):
     """
-    Purpose: Check if a drop is in the file - for the
-    
-    where: 
-        height_range: Can be a two element list or a single value. If list first val is minimum and second is the maximum for the peak
-                  if single value its interpreted as the minimum for peak classification
+    Checks if there are peaks in the acceleration data based on the specified height range.
+
+    Parameters
+    ----------
+
+    accel_data : np.ndarray
+        Array of acceleration data.
+    height_range : float or list, optional
+        Can be a single value representing the minimum peak height, or a list with two values representing the minimum and maximum peak heights. Default is 2.8.
+
+    Returns
+    -------
+
+    list
+        A list containing:
+        - A boolean indicating if peaks were found.
+        - If peaks were found, a list of peak indices and a dictionary with peak information.
+
+    Notes
+    -----
+
+    The function uses the `find_peaks` method from `scipy.signal` to identify peaks based on the `height_range`.
     """
     peaks_indices, peak_dict_info = find_peaks(accel_data, height = height_range)
     
@@ -41,11 +79,26 @@ def check_peaks_in_data(accel_data, height_range = 2.8):
 # Function to do a moving average
 def moving_average(data, window_size):
     """
-    Purpose: Calc the moving average of the data using set window size
+    Calculates the moving average of the data using a specified window size.
 
-    where:
-        data: the array that the window average is going to be calculated for
-        window_size: Width of the window in indices of the array
+    Parameters
+    ----------
+    
+    data : array-like
+        The array for which the moving average is to be calculated.
+    window_size : int
+        The width of the window in indices of the array.
+
+    Returns
+    -------
+
+    np.ndarray
+        The moving average of the input data.
+
+    Notes
+    -----
+
+    The function uses cumulative sums to compute the moving average efficiently.
     """
 
     # Convert the data to np array
@@ -57,14 +110,32 @@ def moving_average(data, window_size):
 
 def find_deriv_change(x, y, cutoff, greater = True):
     """
-    Purpose: Find the derivative of the x,y data a determine the location where the derivative reaches the threshold
+    Finds the locations where the derivative of the data reaches a specified threshold.
 
-    where:
-        x: Array of independent data
-        y: Array of dependent data
-        greater: Determines if a search from greater than or less than the cutoff
+    Parameters
+    ----------
 
-    NOTE: np.gradient uses second order central differencing on the interior and first order accurate differencing on the boundaries
+    x : np.ndarray
+        Array of independent data.
+    y : np.ndarray
+        Array of dependent data.
+    cutoff : float
+        The threshold value for the derivative.
+    greater : bool, optional
+        If True, finds locations where the derivative is greater than the cutoff. If False, finds locations where the derivative is less 
+        than the cutoff. Default is True.
+
+    Returns
+    -------
+
+    tuple
+        Indices where the derivative meets the specified condition.
+
+    Notes
+    -----
+
+    The function calculates the derivative of the data using `np.gradient`, which employs second-order central differencing for the i
+    nterior and first-order differencing for the boundaries.
     """
     # Calc the derivative
     derivative = np.gradient(y, x)

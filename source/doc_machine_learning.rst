@@ -1,16 +1,11 @@
 .. _doc_machine_learning:
 
-Machine Learning Modules
-=========================
-
 Machine Learning Classes
--------------------------
+=========================
 
 .. toctree::
    :glob:
    :maxdepth: 2
-   :caption: Contains functions that are helpful in multiple modules.
+   :caption: Contains functions that are for calculating White et al. (2018)
 
-   doc_machine_learning/doc_randomForestClass
-
-    
+   doc_machine_learning/random_forest

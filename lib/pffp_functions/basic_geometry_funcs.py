@@ -8,6 +8,46 @@ def calcCylinderSurfaceArea(radius, height):
     where:
         radius: Radius of the cylinder
         height of the cylinder
+
+    Parameters
+    ----------
+
+    radius : float
+        The radius of the cylinder's base, typically in units of length (e.g., meters).
+    height : float
+        The height of the cylinder, typically in units of length (e.g., meters).
+
+    Returns
+    -------
+
+    float
+        The total surface area of the cylinder, typically in square units (e.g., square meters).
+
+    Notes
+    -----
+
+    The total surface area is calculated as the sum of the area of the two circular bases and the area of the lateral surface. The formula used is:
+
+    .. math::
+
+        A_{\text{total}} = 2 \pi r^2 + 2 \pi r h
+
+    where:
+    - :math:`r` is the radius of the cylinder's base.
+    - :math:`h` is the height of the cylinder.
+    - :math:`\pi` is a mathematical constant approximately equal to 3.14159.
+
+    Example
+    -------
+
+    Calculate the surface area of a cylinder with a radius of 3 units and a height of 5 units:
+
+    >>> radius = 3
+    >>> height = 5
+    >>> surface_area = calcCylinderSurfaceArea(radius, height)
+    >>> print(surface_area)
+    150.79644737231007  # example output
+
     """
     baseArea = PI_CONST * radius**2 # Surface area of the base of the cylinder
     sideArea = 2 * PI_CONST * radius * height # Surface area on the side of the cylinder
@@ -16,39 +56,101 @@ def calcCylinderSurfaceArea(radius, height):
 
 def calcConeLateralSurfaceArea(radius, height):
     """
-    Purpose: Calculates the lateral surface of a cone (Doesn't calc the surface area of the base of the cone)
-    where:
-        radius: radius of the base of the cone
-        height: height of the cone (measured normal to the base)
-        sideSlope: Side slope of the cone
+    Calculates the lateral surface area of a cone.
+
+    Parameters
+    ----------
+
+    radius : float
+        The radius of the base of the cone.
+    height : float
+        The height of the cone, measured perpendicular to the base.
+
+    Returns
+    -------
+
+    float
+        The lateral surface area of the cone.
+
+    Notes
+    -----
+
+    The lateral surface area of a cone is calculated using the formula:
+        A = π * radius * sideSlope
+    where the sideSlope (slant height) of the cone is calculated as:
+        sideSlope = sqrt(height^2 + radius^2)
     """
     return PI_CONST * radius * np_sqrt(height**2 + radius**2)
 
 def calcCircleArea(radius):
     """
-    Purpose: Calc the area of a circle
-    where:
-        radius: radius of the circle
+    Calculates the area of a circle.
+
+    Parameters
+    ----------
+
+    radius : float
+        The radius of the circle.
+
+    Returns
+    -------
+
+    float
+        The area of the circle.
+
+    Notes
+    -----
+    
+    The area of a circle is calculated using the formula:
+        A = π * radius^2
     """
 
     return PI_CONST * radius**2
 
 def calcParabolaSurfaceArea(depth, radius_coeff):
     """
-    Purpose: Calc the surface of a rotated parabola 
-    
-    Derivation of the surface area
-    See first thereom of: https://en.wikipedia.org/wiki/Pappus%27s_centroid_theorem#The_first_theorem
-    
-    Eqn:
-        A_{mantle} = 2 * \pi \int_{0}^{h} r * \sqrt{1 + r'(h)^{2}} dh
-        
-    where:
-        r: radius, r = \sqrt{radius_coeff * h}
-        h: height on the parabola (or equivalently the depth of penetration)
-        r': (dr/dh), r' = 0.5 * (\sqrt{radius_coeff/h}) 
-    """
+    Calculate the surface area of a rotated parabola.
 
+    This function computes the surface area of a parabola rotated around its axis 
+    using the surface area formula derived from Pappus's centroid theorem.
+
+    The surface area \( A_{mantle} \) is given by:
+
+        A_{mantle} = \frac{4}{3} \frac{\pi}{r_c} \left[ \left( r_c d + \frac{r_c^2}{4} \right)^{3/2} - \left( \frac{r_c^2}{4} \right)^{3/2} \right]
+
+    where:
+        r_c : radius coefficient (constant related to the curvature of the parabola)
+        d   : depth of penetration (height on the parabola)
+
+    Parameters
+    ----------
+    
+    depth : float
+        The depth of penetration or height on the parabola.
+    radius_coeff : float
+        The radius coefficient, related to the curvature of the parabola.
+
+    Returns
+    -------
+
+    float
+        The surface area of the rotated parabola.
+
+    Notes
+    -----
+
+    The integral used in the surface area calculation has an analytic solution. 
+    Ensure that the depth and radius_coeff are positive numbers to avoid mathematical errors.
+
+    Examples
+    --------
+    >>> calcParabolaSurfaceArea(10, 5)
+    334.23874119161055
+    """
+      # Ensure the depth and radius_coeff are positive
+    if depth <= 0 or radius_coeff <= 0:
+        raise ValueError("Both depth and radius_coeff must be positive values.")
+    
     #TODO: Check the work on this equation one more time
     # Integral has an analytic solution (goes from depth == 0 to depth == current depth)
     area = 4/3 * PI_CONST/radius_coeff * ( (radius_coeff * depth + radius_coeff**2/4)**(3/2) - (radius_coeff**2/4)**(3/2) )

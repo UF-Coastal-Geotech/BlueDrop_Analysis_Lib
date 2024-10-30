@@ -9,34 +9,70 @@ from lib.data_classes.pffpFile import pffpFile  # Import pffpFile class from lib
 
 class Folder:
     """
-    Base class for folders.
+    Base class for managing folders.
+
+    This class provides methods to interact with and manage files within a specified folder directory.
+
+    Attributes
+    ----------
+
+    folder_dir : str
+        The directory path of the folder.
+
+    Methods
+    -------
+
+    __init__(folder_dir)
+        Initialize the Folder object with the specified folder directory.
+    __str__()
+        Return a string representation of the Folder object.
+    get_num_files(file_extension, recursive)
+        Get the number of files in the folder with a specific file extension.
+    get_directories_by_extension(file_extension, recursive, subfolder="")
+        Get a list of file directories with a specific file extension in the folder.
     """
 
     def __init__(self, folder_dir):
         """
-        Initialize the Folder object with folder directory.
+        Initialize the Folder object with the specified folder directory.
 
-        Inputs:
-        - folder_dir: The directory path of the folder.
+        Parameters
+        ----------
+
+        folder_dir : str
+            The directory path of the folder.
         """
         self.folder_dir = folder_dir  # Store the folder directory
 
     def __str__(self):
         """
-        Define the string representation of the Folder object.
+        Return a string representation of the Folder object.
+
+        Returns
+        -------
+
+        str
+            A string representing the folder directory.
         """
         return f"Folder dir: {self.folder_dir}"
 
     def get_num_files(self, file_extension, recursive):
         """
-        Get the number of files in a folder with a specific file extension.
+        Get the number of files in the folder with a specific file extension.
 
-        Inputs:
-        - file_extension: The file extension (e.g., '.txt', '.csv').
-        - recursive: Boolean flag to indicate whether to search subdirectories recursively.
+        Parameters
+        ----------
 
-        Returns:
-        - count: The number of files with the specified extension.
+        file_extension : str
+            The file extension (e.g., '.txt', '.csv').
+        recursive : bool
+            Boolean flag to indicate whether to search subdirectories recursively.
+
+        Returns
+        -------
+
+        int
+            The number of files with the specified extension.
         """
         # Count files matching the file extension in the folder
         count = len(glob.glob(self.folder_dir + "/*" + file_extension, recursive=recursive))
@@ -46,13 +82,21 @@ class Folder:
         """
         Get a list of file directories with a specific file extension in the folder.
 
-        Inputs:
-        - file_extension: The file extension (e.g., '.txt', '.csv').
-        - recursive: Boolean flag to indicate whether to search subdirectories recursively.
-        - subfolder: Optional subfolder name to search within.
+        Parameters
+        ----------
 
-        Returns:
-        - file_dirs: List of file directories matching the criteria.
+        file_extension : str
+            The file extension (e.g., '.txt', '.csv').
+        recursive : bool
+            Boolean flag to indicate whether to search subdirectories recursively.
+        subfolder : str, optional
+            Optional subfolder name to search within.
+
+        Returns
+        -------
+        
+        list of str
+            List of file directories matching the criteria.
         """
         file_dirs = []
 

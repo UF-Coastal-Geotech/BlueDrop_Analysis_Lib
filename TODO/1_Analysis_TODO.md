@@ -3,13 +3,18 @@
 ## Documentation that needs to be written
 This includes adding paper references for the equations. There needs to be a link between the function and the work that it came from. There needs to be a significant effort to get the source from the original source and confirm that the equation is actually in the original source. Ideally there should be a reference to a page in the reference and an equation number.
 
-### Folder: data_classes
+
+### Need Sphinx docs
+
+### Data classes
 1) BinaryFile
 2) dropClass
 3) exceptions
 4) fileClass
 5) folderClass
 6) TypeMixin
+7) PFFPFolder
+8) PFFPFile
 
 ### Folder: general_functions
 1) global_constants

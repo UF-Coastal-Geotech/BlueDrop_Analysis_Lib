@@ -37,7 +37,7 @@ def calc_Duncan_friction_angle(relative_density, unit_weight, max_depth, coeff =
     The friction angle is calculated using the following equation:
     
     .. math::
-        \\phi' = A^{*} + B^{*}(D_{r}) - [C^{*} + D^{*}(D_{r})] \\log(\sigma'_{n} / P_{a})
+        \\phi' = A^{*} + B^{*}(D_{r}) - [C^{*} + D^{*}(D_{r})] \\log(\\sigma'_{n} / P_{a})
 
     where:
         - :math:`A^{*}` is a constant with a value of 34.
@@ -98,7 +98,7 @@ def calc_Alabatal_friction_angle(relative_density, unit_weight, max_depth, atmos
     This function utilizes the Duncan friction angle equation with coefficients from Albatal et al. (2020):
     
     1. .. math::
-        \\phi' = A^{*} + B^{*}(D_{r}) - [C^{*} + D^{*}(D_{r})] \log(\\sigma'_{n} / P_{a})
+        \\phi' = A^{*} + B^{*}(D_{r}) - [C^{*} + D^{*}(D_{r})] \\log(\\sigma'_{n} / P_{a})
 
     where:
         - :math:`A^{*}` is a constant with a value of 34.

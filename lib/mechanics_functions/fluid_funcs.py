@@ -9,6 +9,7 @@ def calc_drag_force(rho_fluid, drag_coeff, velocity, frontal_area):
 
     Parameters
     ----------
+    
     rho_fluid : float
         Density of the fluid [kg/m^3].
     drag_coeff : float

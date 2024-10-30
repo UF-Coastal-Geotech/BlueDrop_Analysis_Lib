@@ -8,25 +8,61 @@ from lib.data_classes.Type_Mixin import TypeMixin
 # Binary file class inherits the File class and the TypeMixin
 class BinaryFile(File, TypeMixin):
     """
-    Pupose: The BinaryFile class is used to represent any type of binary file.
-            it contains modules that read and convert binary file to dfs.
+    Represents a binary file and provides functionality to read and convert the binary data into a Pandas DataFrame.
+
+    Parameters
+    ----------
+    
+    file_dir : str
+        The directory of the binary file.
     """
-    # Purpose define properties of binary files
 
     def __init__(self, file_dir):
+        """
+        Initializes the BinaryFile object.
+
+        Parameters
+        ----------
+
+        file_dir : str
+            The directory of the binary file.
+        """
+
         File.__init__(self, file_dir) # inherit parent methods and store file dir
     
     # method to print info about the binary file
     def __str__(self):
+        """
+        Returns a string representation of the BinaryFile object.
+
+        Returns
+        -------
+
+        str
+            String containing the file directory.
+        """
         return f"File Directory: {self.file_dir}"
     
     def read_binary(self, size_byte = 3):
         """
-        Purpose: Read a binary file and store it in an arr
+        Reads a binary file and stores the data in a list.
+
+        Parameters
+        ----------
+
+        size_byte : int, optional
+            Number of bytes to read at a time. Defaults to 3, which is typical for PFFP binary files.
+
+        Returns
+        -------
+
+        list of bytes
+            List containing chunks of binary data read from the file.
         
-        where:
-            size_byte: number of bytes that should be read at a time.
-                In terms of the PFFP binary files this corresponds to the number of bytes a number is represented by
+        Notes
+        -----
+
+        This method reads the binary data chunk by chunk, based on the specified byte size, until the end of the file is reached.
         """
         #TODO: maybe convert the binary right away. You have to unwrap the data again the way it is right now
         
@@ -44,14 +80,37 @@ class BinaryFile(File, TypeMixin):
 
     def binary_file_2_df(self, column_names, num_columns, num_rows = -1, size_byte = 3, byte_order = "big", signed = True):
         """
-        ### Purpose: Read a binary file and store the data in a df
+        Reads a binary file, converts it to integers, and stores the data in a Pandas DataFrame.
 
-        #### where:
-        column_names: columns names for the created df
-        num_columns: Number of columns that should be in the new df
-        num_rows: Number of the rows in the new df (preset to -1 so that the value is implicit) 
-        size_byte: Number of bytes that should be read at once (This is the number of bytes that make up a value)
-        byte_order: Defines how the bytes of a binary number are arranged in memory. For PFFP binary files the byte_order is "big"
+        Parameters
+        ----------
+
+        column_names : list of str
+            Names of the columns in the resulting DataFrame.
+        num_columns : int
+            Number of columns in the DataFrame.
+        num_rows : int, optional
+            Number of rows in the DataFrame. Defaults to -1, which infers the number of rows based on the data size.
+        size_byte : int, optional
+            Number of bytes to read at once for each value. Defaults to 3.
+        byte_order : str, optional
+            Byte order for reading binary data ('big' or 'little'). Defaults to 'big'.
+        signed : bool, optional
+            Whether the integers are signed or unsigned. Defaults to True.
+
+        Returns
+        -------
+
+        pd.DataFrame
+            DataFrame containing the binary data converted to integers.
+        
+        Notes
+        -----
+
+        The binary data is read and then converted into integers, which are arranged in a matrix format. 
+        The resulting matrix is used to create a Pandas DataFrame.
+
+        The byte order indicates the order in which the bytes are stored in memory. For PFFP binary files, the typical order is 'big'.
         """
 
         # Read the binary file

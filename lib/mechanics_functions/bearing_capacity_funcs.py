@@ -76,11 +76,9 @@ def calc_air_drop_dyn_bearing(pffp_accel, pffp_velocity, pffp_mass, pffp_frontal
     force_bearing = pffp_mass * pffp_accel + force_gravity - force_drag
 
     # Calc the dyn
-    qDyn = force_bearing/soil_contact_area
+    qDyn = np.array(force_bearing)/soil_contact_area
 
     return  qDyn
-
-
 
 def calc_water_drop_dyn_bearing(pffp_accel, pffp_velocity, pffp_mass, pffp_frontal_area, soil_contact_area, pffp_volume, drag_coeff, gravity, rho_water):
     """
@@ -163,7 +161,7 @@ def calc_water_drop_dyn_bearing(pffp_accel, pffp_velocity, pffp_mass, pffp_front
 
     return qDyn
 
-def calc_dyn_bearing_capacity(pffp_accel, pffp_velocity, pffp_mass, pffp_frontal_area, soil_contact_area, pffp_volume, water_drop, drag_coeff = 1.0, 
+def calc_dyn_bearing_capacity(pffp_accel, pffp_velocity, pffp_mass, pffp_frontal_area, soil_contact_area, pffp_volume, water_drop, drag_coeff = 0.0, 
                               gravity = GRAVITY_CONST, rho_water = 1020, rho_air = 1.293):
     """
     Calculate the dynamic bearing capacity of the soil for both water and air drops.
@@ -213,6 +211,10 @@ def calc_dyn_bearing_capacity(pffp_accel, pffp_velocity, pffp_mass, pffp_frontal
 
     """
     
+    # Make sure water_drop is set to True or False
+    if not isinstance(water_drop, bool):
+        raise TypeError(f"water_drop type is {type(water_drop)}. The type should be a boolean. Therefore it has to have a value of True or False")
+    
     if water_drop:
         # Calc the dynamic bearing capacity
         qDyn = calc_water_drop_dyn_bearing(pffp_accel, pffp_velocity, pffp_mass= pffp_mass, pffp_frontal_area=pffp_frontal_area, 
@@ -221,8 +223,8 @@ def calc_dyn_bearing_capacity(pffp_accel, pffp_velocity, pffp_mass, pffp_frontal
 
     elif not water_drop:
         # Otherwise do the calc using the air drop formula
-        qDyn = calc_air_drop_dyn_bearing(pffp_accel=pffp_accel, pffp_mass=pffp_mass, soil_contact_area=soil_contact_area, 
-                                         drag_coeff = drag_coeff, gravity=gravity, rho_air = rho_air)
+        qDyn = calc_air_drop_dyn_bearing(pffp_accel=pffp_accel, pffp_velocity=pffp_velocity, pffp_mass=pffp_mass, pffp_frontal_area=pffp_frontal_area,
+                                         soil_contact_area=soil_contact_area, drag_coeff = drag_coeff, gravity=gravity, rho_air = rho_air)
 
     return qDyn
 

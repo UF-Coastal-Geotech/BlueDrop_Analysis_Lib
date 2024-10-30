@@ -10,10 +10,69 @@ from lib.general_functions.helper_functions import create_folder_if_not_exists, 
 from lib.data_classes.exceptions import zeroLenError
 
 class pffpDataFolder(Folder):
-    # Pupose: Hold data about a folder that contains a PFFP data
+    """
+    A class for managing a folder containing PFFP data.
+
+    Inherits from the `Folder` class and provides additional functionality specific to PFFP data handling.
+
+    Attributes
+    ----------
+    folder_dir : str
+        The directory path of the folder.
+    pffp_id : str
+        The identifier for the PFFP.
+    calibration_factor_dir : str
+        Directory containing the calibration factors for the PFFP.
+    survey_name : str, optional
+        The name of the survey during which the data was collected.
+    num_pffp_files : int
+        The number of PFFP files found in the folder.
+    datetime_range : str
+        The date range of the data.
+    calibration_excel_sheet : pandas.DataFrame, optional
+        The calibration data read from an Excel sheet.
+    calibration_params : pandas.DataFrame, optional
+        Calibration parameters for the sensors.
+    num_drop_files : int
+        The number of files containing drop data.
+
+    Methods
+    -------
+    __str__()
+        Return a string representation of the `pffpDataFolder` object.
+    read_calibration_excel_sheet()
+        Read the calibration data from an Excel sheet.
+    get_sensor_calibration_params(date_string)
+        Retrieve the calibration parameters for a specified date.
+    store_pffp_files(recursive=False, subfolder="")
+        Store PFFP files from the directory.
+    move_file_2_funky(file, funky_dir)
+        Move a file to a designated "funky" directory.
+    analyze_all_files(subfolder_dir="no_drop_folder", use_pore_pressure=True, store_df=True, select_accel=["2g_accel", "18g_accel", "50g_accel", "250g_accel"], debug=False)
+        Analyze all files to categorize them into files with drops and files without drops.
+    process_drop_files()
+        Process all files containing drop data and create drop objects.
+    get_file_index_from_name()
+        Get the index of a file based on its name (not implemented).
+    """
 
     # Init the input params and store them in DataFolder Instance
     def __init__(self, folder_dir, pffp_id, calibration_factor_dir, survey_name = None):
+        """
+        Initialize a `pffpDataFolder` object with folder directory, PFFP ID, calibration factors directory, and optional survey name.
+
+        Parameters
+        ----------
+
+        folder_dir : str
+            The directory path of the folder.
+        pffp_id : str
+            The identifier for the PFFP.
+        calibration_factor_dir : str
+            Directory containing the calibration factors for the PFFP.
+        survey_name : str, optional
+            The name of the survey during which the data was collected.
+        """
         # init the parent class
         Folder.__init__(self, folder_dir)
 
@@ -30,19 +89,46 @@ class pffpDataFolder(Folder):
         self.num_drop_files = "Not Set"
 
     def __str__(self):
+        """
+        Return a string representation of the `pffpDataFolder` object.
+
+        Returns
+        -------
+
+        str
+            A string summarizing the folder directory, date range, PFFP ID, calibration parameter directory, and file counts.
+        """
+                
         return f"Folder: {self.folder_dir} \nDate range: {self.datetime_range} \nPFFP id: {self.pffp_id} \
                 \nCalibration Param dir: {self.calibration_factor_dir} \nNum .bin files: {self.num_pffp_files} \
                 \nNum files with drops: {self.num_drop_files}"
     
     def read_calibration_excel_sheet(self):
-        # Purpose: Read the calibartion data for specified pffp id
+        """
+        Read the calibration data from the specified Excel sheet based on the PFFP ID.
+
+        The sheet name is constructed using the PFFP ID and is expected to be named "bluedrop_<pffp_id>".
+        """
+                
         sheet_name = "bluedrop_" + str(self.pffp_id)
 
         self.calibration_excel_sheet = pd.read_excel(self.calibration_factor_dir, sheet_name)
 
     def get_sensor_calibration_params(self, date_string):
-        # Purpose: Retrieve the possible calibration dates for the selected sheet
+        """
+        Retrieve the calibration parameters for the specified date from the calibration data.
 
+        Parameters
+        ----------
+        date_string : str
+            The date string used to construct column names for offset and scale values.
+
+        Raises
+        ------
+        IndexError
+            If the calibration data has not been read yet.
+        """
+                
         # temp storage of the data
         data = self.calibration_excel_sheet
 
@@ -56,8 +142,27 @@ class pffpDataFolder(Folder):
         # Select those columns of the df
         self.calibration_params = data[["Sensor", offset_string, scale_string]]
 
+        # TODO: Might be able to add another column here for the horizontal offset
+        
     def store_pffp_files(self, recursive = False, subfolder = ""):
-        # Purpose: Store the binary files in the 
+        """
+        Store PFFP binary files found in the directory.
+
+        Parameters
+        ----------
+
+        recursive : bool, optional
+            Whether to search subdirectories recursively.
+        subfolder : str, optional
+            The subfolder within the main folder to search in.
+        
+        Raises
+        ------
+
+        IndexError
+            If the calibration parameters have not been read yet.
+        """
+                
         binary_file_dirs = self.get_directories_by_extension("bin", recursive, subfolder)
 
         # init list to hold pffp files
@@ -75,7 +180,17 @@ class pffpDataFolder(Folder):
         self.num_pffp_files = len(self.pffp_files)
 
     def move_file_2_funky(self, file, funky_dir):
-        # Purpose: Move a file into the funky folder
+        """
+        Move a file to the designated "funky" directory.
+
+        Parameters
+        ----------
+
+        file : pffpFile
+            The file object to be moved.
+        funky_dir : str
+            The directory path where the file should be moved.
+        """
 
         # Construct the new file dir
         funky_file_dir = os.path.join(funky_dir, file.file_name)
@@ -97,7 +212,28 @@ class pffpDataFolder(Folder):
     def analyze_all_files(self, subfolder_dir = "no_drop_folder", use_pore_pressure = True, store_df = True,
                           select_accel = ["2g_accel", "18g_accel", "50g_accel", "250g_accel"],
                           debug = False ):
-        # Purpose: Get the files that have drops in them
+        """
+        Analyze all files to categorize them into files with drops and files without drops.
+
+        Parameters
+        ----------
+
+        subfolder_dir : str, optional
+            The subfolder within the main folder where files with drops should be stored.
+        use_pore_pressure : bool, optional
+            Whether to use pore pressure data in the analysis.
+        store_df : bool, optional
+            Whether to store DataFrames for drop analysis.
+        select_accel : list of str, optional
+            List of acceleration types to be selected.
+        debug : bool, optional
+            Whether to print debug information.
+
+        Notes
+        -----
+
+        The analysis will move files to corresponding directories and update the file lists.
+        """
 
         # store_drop_df: Store the df if it's a drop
 
@@ -175,8 +311,22 @@ class pffpDataFolder(Folder):
 
     def process_drop_files(self):
         """
-        Process all of the drops in the files that have drops. This means that drop objects will be created for
-        each drop in the file. To accomplish this the start and end of the drop must be identified.
+        Process all files that contain drop data and create drop objects.
+
+        This method iterates through each file in the `pffp_drop_files` list, processes the drops by identifying their start and end points,
+        and creates drop objects. If a file cannot be processed due to an error, it is moved to the "funky" directory.
+
+        Raises
+        ------
+
+        zeroLenError
+            If a file cannot be processed due to zero-length drops, the file is moved to the "funky" directory.
+
+        Notes
+        -----
+
+        - A progress bar is displayed during the processing to show the progress.
+        - The list of drop files is updated to remove any files that were moved to the funky directory.
         """
         # Print progress bar label
         print("\nProgress processing drops in files...")
@@ -221,11 +371,22 @@ class pffpDataFolder(Folder):
             self.num_drop_files = len(self.pffp_drop_files)
             
     def get_file_index_from_name(self):
+        """
+        Get the index of a file based on its name in the relevant file lists.
+
+        This method is intended to return the index of a file given its name, from either the `pffp_files` list, 
+        `pffp_no_drop` list, or `pffp_drop` list depending on its current categorization.
+
+        Raises
+        ------
+        
+        NotImplementedError
+            Indicates that the module for retrieving file index by name has not been implemented yet.
+        """
         # TODO: Purpose: Given a file name get the index of that file in
             #  pffp_files list
             # pffp_no_drop list or pffp_drop list depending on where it is
         raise NotImplementedError(" Module hasn't been implemented. Work will be done in the future")
-        pass
 
     
 if __name__ == "__main__":

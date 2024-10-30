@@ -100,6 +100,10 @@ def calcFFPConeContactArea(penetrationDepth, tipHeight, baseRadius, coneTipRadiu
         coneTipRadius: Radius of the cone tip (is not zero)
         tipHeight: Height of the cone when measured normal to the circular base
         areaCalcType: Selection of mantle or projected
+
+    return: Array of calculated contact area values for each penetration depth.
+    rtype: np.ndarray
+    raises ValueError: If `areaCalcType` is not "mantle" or "projected"
     """
 
     # Init array to store area

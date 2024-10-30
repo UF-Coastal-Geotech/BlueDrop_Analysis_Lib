@@ -2,6 +2,7 @@
 
 Signal Processing Functions
 ============================
+
 Functions that are used for signal processing
 
 .. toctree::

@@ -1,0 +1,54 @@
+# .github/workflows/test-conda.yml
+name: Python application (Conda)
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [3.12]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          auto-update-conda: true
+          activate-environment: PFFP_Analysis
+          environment-file: environment_linux.yml
+          use-mamba: true  # Optional, speeds up package installation
+
+      - name: Verify Conda Installation
+        run: conda info
+
+      - name: Install Dependencies
+        run: conda env update --file environment_linux.yml
+
+      - name: Initialize Conda
+        # Ensure conda is initialized in the shell
+        run: conda init bash
+        shell: bash -l {0}
+
+      - name: Run tests with pytest
+        run: |
+          source ~/.bashrc  # Reload the shell after conda init
+          conda activate PFFP_Analysis
+          pytest
+        shell: bash -l {0}

@@ -26,6 +26,77 @@ def calc_qNet_dyn_at_vel(qNet_d_guess,  qNet_dyn, depth, relative_density, measu
         Q                    : Crushing coeff ???
         wated_velocity       : Velocity that q is wanted at
 
+    This function computes the dynamic net bearing resistance (`qNet_dyn`) at a specified velocity (`wanted_velocity`) 
+    and depth, given various soil and probe parameters. It first determines the dry net bearing resistance (`qNet_dry`) 
+    using either a specified relative density or a guessed value and then computes the dynamic bearing resistance for the desired velocity.
+
+    Parameters
+    ----------
+
+    qNet_d_guess : float
+        An initial guess for the dry net bearing resistance. A reasonable range is between 1000 and 10000 kPa.
+    qNet_dyn : float
+        The measured dynamic net bearing resistance.
+    depth : float
+        Depth of the current measurement below the sediment interface, typically in meters.
+    relative_density : float
+        Relative density of the soil, typically expressed as a percentage. Used when `calc_relative_density` is True.
+    measured_velocity : float
+        Velocity of the portable free fall penetrometer (PFFP) at the measurement location, typically in m/s.
+    coeff_consolidation : float
+        Coefficient of consolidation of the soil, typically in m²/s.
+    V_50 : float, optional
+        Dimensionless velocity corresponding to a 50% reduction in the undrained shear strength. Default is 1.
+    Q : float, optional
+        Crushing coefficient or a parameter related to the soil’s response to penetration. Default is 10.
+    wanted_velocity : float, optional
+        Desired velocity at which the dynamic net bearing resistance is calculated. Default is 0.02 m/s.
+    probe_diameter : float, optional
+        Diameter of the probe used in the measurement, typically in meters. Default is 1 m.
+    phi_cv : float, optional
+        Critical state friction angle, typically in degrees. Default is 32°.
+    Nkt : float, optional
+        Cone factor, used to calculate the undrained shear strength from the net bearing resistance. Default is 12.
+    calc_relative_density : bool, optional
+        If True, the function will calculate the dry net bearing resistance based on the relative density. 
+        If False, a dry net bearing resistance is calculated using a guessed value. Default is False.
+
+    Returns
+    -------
+    
+    float
+        Dynamic net bearing resistance (`wanted_qNet_dyn`) at the specified velocity (`wanted_velocity`).
+
+    Notes
+
+    -----
+    The function proceeds through the following steps:
+    1. Calculate the dimensionless velocity (`current_V`) at the measured velocity.
+    2. Determine the dry net bearing resistance (`qNet_dry`) based on either a guessed value or calculated relative density.
+    3. Calculate the dynamic net bearing resistance (`wanted_qNet_dyn`) at the desired velocity.
+
+    This function relies on several helper functions, including:
+    - `calc_dimensionless_velocity`: Calculates the dimensionless velocity.
+    - `find_qNet_dry`: Finds the dry net bearing resistance.
+    - `calc_white_failure_mean_eff_stress`: Calculates the mean effective stress at failure.
+    - `calc_mohr_coulomb_su`: Calculates the undrained shear strength using the Mohr-Coulomb criterion.
+    - `calc_qNet_undrained`: Calculates the net bearing resistance under undrained conditions.
+    - `calc_white_qNet_dyn`: Calculates the dynamic net bearing resistance using the White method.
+
+    If debugging (`DEBUG`) is enabled, the function prints intermediate results, such as the calculated dimensionless velocities, relative density, and dry bearing resistance.
+
+    Example
+    -------
+    
+    Example usage:
+
+    >>> qNet_dyn = calc_qNet_dyn_at_vel(qNet_d_guess=5000, qNet_dyn=1200, depth=5, relative_density=0.6,
+                                        measured_velocity=0.05, coeff_consolidation=1e-6,
+                                        V_50=1.5, Q=15, wanted_velocity=0.02, probe_diameter=0.05, 
+                                        phi_cv=30, Nkt=10, calc_relative_density=True)
+    >>> print(qNet_dyn)
+    1100.34  # example output
+
     """
 
     # Calc the current dimensionless velocity
@@ -75,6 +146,7 @@ def calc_white_qNet_dyn(qNet_ud, qNet_d, V, V_50=1.0):
 
     Parameters
     ----------
+
     qNet_ud : float
         Net undrained bearing resistance.
     qNet_d : float
@@ -86,11 +158,13 @@ def calc_white_qNet_dyn(qNet_ud, qNet_d, V, V_50=1.0):
 
     Returns
     -------
+
     float
         Net dynamic bearing resistance.
 
     Notes
     -----
+
     For detailed information, refer to the following paper:
     White, D. J., et al. "Free fall penetrometer tests in sand: Determining the equivalent static resistance."
 
@@ -104,6 +178,21 @@ def calc_qNet_undrained(undrained_strength, Nkt = 12):
 
     Eqn:
         q_{net, u} = N_{kt} s_{u}
+
+    Parameters
+    ----------
+
+    undrained_strength : float
+        Undrained shear strength (Su) of the soil, typically in kPa.
+    Nkt : float, optional
+        Cone factor used to relate the undrained shear strength to the net bearing resistance. Default is 12.
+
+    Returns
+    -------
+
+    float
+        Net undrained bearing resistance (`q_net,u`), typically in kPa.
+
     """
 
     return Nkt * undrained_strength
@@ -180,6 +269,39 @@ def find_qNet_dry(qNet_d_guess, qNet_dyn, relative_density, V, V_50 = 1, Q = 10,
 def find_qNet_dry_2(qNet_d_guess, qNet_dyn, depth, V, V_50 = 1, Q = 10, phi_cv = 32, Nkt = 12):
     """
     Function to serve as the basis for the solver to find the net drained bearing resistance
+
+    Solve for the net drained bearing resistance (`qNet_dry`) considering depth and calculated relative density.
+
+    Parameters
+    ----------
+
+    qNet_d_guess : float
+        Initial guess for the net drained bearing resistance (`qNet_dry`), typically in kPa.
+    qNet_dyn : float
+        Measured dynamic bearing resistance, typically in kPa.
+    depth : float
+        Depth of the current measurement below the sediment interface, typically in meters.
+    V : float
+        Current dimensionless velocity.
+    V_50 : float, optional
+        Dimensionless velocity corresponding to a 50% failure probability. Default is 1.
+    Q : float, optional
+        Crushing coefficient. Default is 10.
+    phi_cv : float, optional
+        Critical state friction angle of the soil, in degrees. Default is 32°.
+    Nkt : float, optional
+        Cone factor used to relate the undrained shear strength to the net bearing resistance. Default is 12.
+
+    Returns
+    -------
+
+    float
+        Difference between the calculated dynamic bearing capacity and the measured dynamic bearing resistance (`qNet_dyn`).
+
+    Notes
+    -----
+
+    This function first calculates the relative density using the `calc_Jamiolkowski_relative_density` function based on the guessed net drained bearing resistance (`qNet_dry`) and depth. It then uses this relative density to compute other parameters and ultimately the difference between the calculated and measured dynamic bearing capacities.
 
     """
     

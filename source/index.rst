@@ -13,12 +13,12 @@ Contents:
    :caption: Contents:
    
    intro
-   doc_data_classes
-   doc_signal_processing
-   doc_general_functions
-   doc_machine_learning
    doc_mechanics_functions
-      
+   doc_data_classes
+   doc_machine_learning
+   doc_general_functions
+   doc_signal_processing
+   
 Indices and tables
 ==================
 
