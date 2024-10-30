@@ -91,7 +91,52 @@ White, D. J., et al. “Free fall penetrometer tests in sand: Determining the eq
 <dl class="py function">
 <dt class="sig sig-object py" id="mechanics_functions.white_bearing_capacity.find_qNet_dry">
 <span class="sig-prename descclassname"><span class="pre">mechanics_functions.white_bearing_capacity.</span></span><span class="sig-name descname"><span class="pre">find_qNet_dry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qNet_d_guess</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qNet_dyn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relative_density</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V_50</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi_cv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nkt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mechanics_functions.white_bearing_capacity.find_qNet_dry" title="Link to this definition">¶</a></dt>
-<dd><p>Function to serve as the basis for the solver to find the net drained bearing resistance</p>
+<dd><p>Calculate the net drained bearing resistance.</p>
+<p>This function serves as the basis for a solver to find the net drained bearing resistance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>qNet_d_guess</strong> (<em>float</em>) – Initial guess for the net drained bearing resistance.</p></li>
+<li><p><strong>qNet_dyn</strong> (<em>float</em>) – Dynamic bearing capacity.</p></li>
+<li><p><strong>relative_density</strong> (<em>float</em>) – Relative density of the soil.</p></li>
+<li><p><strong>V</strong> (<em>float</em>) – Applied load or force.</p></li>
+<li><p><strong>V_50</strong> (<em>float</em><em>, </em><em>optional</em>) – Reference velocity, default is 1.</p></li>
+<li><p><strong>Q</strong> (<em>float</em><em>, </em><em>optional</em>) – Empirical parameter, default is 10.</p></li>
+<li><p><strong>phi_cv</strong> (<em>float</em><em>, </em><em>optional</em>) – Critical state friction angle in degrees, default is 32.</p></li>
+<li><p><strong>Nkt</strong> (<em>float</em><em>, </em><em>optional</em>) – Bearing capacity factor, default is 12.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Difference between the calculated dynamic bearing capacity and the given dynamic bearing capacity.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The function calculates the failure mean effective stress, the undrained shear strength, and the undrained bearing capacity.</p></li>
+<li><p>It then calculates the dynamic bearing capacity based on these values and the initial guess.</p></li>
+</ul>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_white_failure_mean_eff_stress</span></code></dt><dd><p>Function to calculate failure mean effective stress.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_mohr_coulomb_su</span></code></dt><dd><p>Function to calculate undrained shear strength.</p>
+</dd>
+<dt><a class="reference internal" href="#mechanics_functions.white_bearing_capacity.calc_qNet_undrained" title="mechanics_functions.white_bearing_capacity.calc_qNet_undrained"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_qNet_undrained</span></code></a></dt><dd><p>Function to calculate undrained bearing capacity.</p>
+</dd>
+<dt><a class="reference internal" href="#mechanics_functions.white_bearing_capacity.calc_white_qNet_dyn" title="mechanics_functions.white_bearing_capacity.calc_white_qNet_dyn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_white_qNet_dyn</span></code></a></dt><dd><p>Function to calculate dynamic bearing capacity.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<p>qNet_d_guess = 100
+qNet_dyn = 150
+relative_density = 0.65
+V = 200
+find_qNet_dry(qNet_d_guess, qNet_dyn, relative_density, V)</p>
 </dd></dl>
 
 <dl class="py function">
