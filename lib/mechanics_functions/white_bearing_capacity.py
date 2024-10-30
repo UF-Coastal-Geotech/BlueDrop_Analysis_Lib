@@ -110,10 +110,58 @@ def calc_qNet_undrained(undrained_strength, Nkt = 12):
 
 def find_qNet_dry(qNet_d_guess, qNet_dyn, relative_density, V, V_50 = 1, Q = 10, phi_cv = 32, Nkt = 12):
     """
-    Function to serve as the basis for the solver to find the net drained bearing resistance
+    Calculate the net drained bearing resistance.
 
+    This function serves as the basis for a solver to find the net drained bearing resistance.
+
+    Parameters
+    ----------
+    qNet_d_guess : float
+        Initial guess for the net drained bearing resistance.
+    qNet_dyn : float
+        Dynamic bearing capacity.
+    relative_density : float
+        Relative density of the soil.
+    V : float
+        Applied load or force.
+    V_50 : float, optional
+        Reference velocity, default is 1.
+    Q : float, optional
+        Empirical parameter, default is 10.
+    phi_cv : float, optional
+        Critical state friction angle in degrees, default is 32.
+    Nkt : float, optional
+        Bearing capacity factor, default is 12.
+
+    Returns
+    -------
+
+    float
+        Difference between the calculated dynamic bearing capacity and the given dynamic bearing capacity.
+
+    Notes
+    -----
+
+    - The function calculates the failure mean effective stress, the undrained shear strength, and the undrained bearing capacity.
+    - It then calculates the dynamic bearing capacity based on these values and the initial guess.
+
+    See Also
+    --------
+
+    calc_white_failure_mean_eff_stress : Function to calculate failure mean effective stress.
+    calc_mohr_coulomb_su : Function to calculate undrained shear strength.
+    calc_qNet_undrained : Function to calculate undrained bearing capacity.
+    calc_white_qNet_dyn : Function to calculate dynamic bearing capacity.
+
+    Examples
+    --------
+
+     qNet_d_guess = 100
+     qNet_dyn = 150
+     relative_density = 0.65
+     V = 200
+     find_qNet_dry(qNet_d_guess, qNet_dyn, relative_density, V)
     """
-    
     
     # Calc the failure mean eff stress
     p_f = calc_white_failure_mean_eff_stress(relative_density, Q)
@@ -137,7 +185,6 @@ def find_qNet_dry_2(qNet_d_guess, qNet_dyn, depth, V, V_50 = 1, Q = 10, phi_cv =
     
     # Calc the relative density
     relative_density = calc_Jamiolkowski_relative_density(qNet_d_guess, depth)
-
 
     # Calc the failure mean eff stress
     p_f = calc_white_failure_mean_eff_stress(relative_density, Q)

@@ -206,6 +206,7 @@ class pffpDataFolder(Folder):
             
             # Set a min time in the case the calculation happens really quickly
             time_left = max((end_time - start_time) * self.num_drop_files - (i+1), 1e-6)
+            
             # Print a progress bar
             progress_bar(i+1, num_files, time_left)
 
