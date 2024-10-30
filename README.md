@@ -47,7 +47,7 @@ The purpose of the next couple of steps are to use ```conda``` and the ```enviro
 
     If on linux run the following command:
     ```conda
-    conda env create --file environment.yml
+    conda env create --file environment_linux.yml
     ```
 
 Installing the packages may take a few minutes.
