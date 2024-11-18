@@ -10,8 +10,11 @@ from lib.mechanics_functions.relative_density_funcs import calc_Jamiolkowski_rel
 # TODO: Look other these functions and make sure all of the possible inputs into each of the nested functions 
 # are incldued in the external function
 def calc_qNet_dyn_at_vel(qNet_d_guess,  qNet_dyn, depth, relative_density, measured_velocity, coeff_consolidation,
+                V_50, Q, wanted_velocity, probe_diameter, phi_cv, Nkt, 
+                calc_relative_density):
+    '''def calc_qNet_dyn_at_vel(qNet_d_guess,  qNet_dyn, depth, relative_density, measured_velocity, coeff_consolidation,
                 V_50 = 1, Q = 10, wanted_velocity = 0.02, probe_diameter = 1, phi_cv = 32, Nkt = 12, 
-                calc_relative_density = False):
+                calc_relative_density = False):'''
     
     """
     Calc the equivalent CPT bearing capacity at a given depth
@@ -101,7 +104,7 @@ def calc_qNet_dyn_at_vel(qNet_d_guess,  qNet_dyn, depth, relative_density, measu
 
     # Calc the current dimensionless velocity
     current_V = calc_dimensionless_velocity(measured_velocity, probe_diameter, coeff_consolidation)
-
+    print('current V =', current_V)
     if calc_relative_density:
         qNet_dry = fsolve(find_qNet_dry_2, qNet_d_guess, args = (qNet_dyn, depth, current_V, V_50, Q, phi_cv, Nkt))
 
@@ -174,7 +177,7 @@ def calc_white_qNet_dyn(qNet_ud, qNet_d, V, V_50=1.0):
 
 def calc_qNet_undrained(undrained_strength, Nkt = 12):
     """
-    Calc the Net undrained bearing resistange from Undrained strength (Su) and a cone factor (Nkt)
+    Calc the Net undrained bearing resistance from Undrained strength (Su) and a cone factor (Nkt)
 
     Eqn:
         q_{net, u} = N_{kt} s_{u}
@@ -290,17 +293,17 @@ def find_qNet_dry_2(qNet_d_guess, qNet_dyn, depth, V, V_50 = 1, Q = 10, phi_cv =
     
     # Calc the relative density
     relative_density = calc_Jamiolkowski_relative_density(qNet_d_guess, depth)
-
+    print(relative_density)
 
     # Calc the failure mean eff stress
     p_f = calc_white_failure_mean_eff_stress(relative_density, Q)
-
+    print(p_f)
     # Calc Su
     su = calc_mohr_coulomb_su(p_f, phi_cv)
-
+    print(su)
     # Calc the qNet_undrained
     qNet_ud = calc_qNet_undrained(su, Nkt)
-
+    print(qNet_ud)
     # Calc the dynamic bearing capacity
     qNet_dyn_calc = calc_white_qNet_dyn(qNet_ud, qNet_d_guess, V, V_50)
     

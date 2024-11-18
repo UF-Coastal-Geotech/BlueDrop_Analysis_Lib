@@ -2,6 +2,9 @@ from lib.mechanics_functions.fluid_funcs import (calc_drag_force,
                                                  calc_buoyant_force, 
                                                  calc_corrected_water_depth)
 
+# Standard imports
+import numpy as np
+
 def test_calc_drag_force():
     """
     Test the drag force calculation for known values. This is test
@@ -22,7 +25,7 @@ def test_calc_drag_force():
 
     # Check if the result is correct
     print("test_calc_drag_force")
-    assert result == expected_drag_force, f"Expected {expected_drag_force}, got {result}"
+    np.testing.assert_almost_equal(result,expected_drag_force, decimal = 6)
 
 def test_calc_buoyant_force():
     # Given values
@@ -34,7 +37,7 @@ def test_calc_buoyant_force():
     expected_buoyancy_force = 20.0 #[N]
 
     result = calc_buoyant_force(rho_fluid, displaced_volume, g)
-    assert result == expected_buoyancy_force, f"Expected {expected_buoyancy_force}, got {result}"
+    np.testing.assert_almost_equal(result,expected_buoyancy_force, decimal = 6)
 
 def test_calc_corrected_water_depth():
     pass
