@@ -9,13 +9,54 @@ from lib.general_functions.global_constants import ALLOWED_TIP_TYPES_LIST
 
 def calc_pffp_contact_area(penetrationDepth, areaCalcType, tipType, tipProps, tip_val_col):
     """
-    Purpose: Wrapper for the contact area functions for all cones
-    NOTE: Assumes a consistent set of units
-    where:
-        penetrationDepth: Array of depths the FFP has penetrated, 
-        areaCalcType: "mantle or projected"
-        tipType: blunt or cone tip type       
-        tipProps: Holds the tip properties that are required for the area calculation
+    Wrapper for the contact area functions for all cones.
+
+    Assumes a consistent set of units.
+
+    Parameters
+    ----------
+
+    penetrationDepth : array-like
+        Array of depths the FFP has penetrated.
+    areaCalcType : str
+        Calculation type for the area, either "mantle" or "projected".
+    tipType : str
+        Type of the tip, either "blunt", "cone", or "parabola".
+    tipProps : pandas.DataFrame
+        DataFrame containing the tip properties required for the area calculation.
+    tip_val_col : str
+        The column name in `tipProps` that contains the tip property values.
+
+    Returns
+    -------
+    
+    area : array-like
+        Calculated contact area.
+
+    Raises
+    ------
+
+    TypeError
+        If `tipProps` is not a pandas DataFrame.
+    ValueError
+        If `tipType` is not a valid type. Valid options are "blunt", "cone", or "parabola".
+
+    Notes
+    -----
+
+    This function assumes a consistent set of units for all input parameters.
+
+    Examples
+    --------
+
+    >>> import pandas as pd
+    >>> tip_props = pd.DataFrame({
+    ...     'Properties': ['tip_height', 'base_radius', 'tip_radius', 'radius_coeff'],
+    ...     'Values': [10, 5, 1, 0.5]
+    ... })
+    >>> penetration_depth = [1, 2, 3]
+    >>> calc_pffp_contact_area(penetration_depth, 'projected', 'cone', tip_props, 'Values')
+    [calculated area array]
     """
 
     if not isinstance(tipProps, pd.DataFrame):
