@@ -104,7 +104,7 @@ def calc_qNet_dyn_at_vel(qNet_d_guess,  qNet_dyn, depth, relative_density, measu
 
     # Calc the current dimensionless velocity
     current_V = calc_dimensionless_velocity(measured_velocity, probe_diameter, coeff_consolidation)
-    print('current V =', current_V)
+
     if calc_relative_density:
         qNet_dry = fsolve(find_qNet_dry_2, qNet_d_guess, args = (qNet_dyn, depth, current_V, V_50, Q, phi_cv, Nkt))
 
@@ -293,18 +293,20 @@ def find_qNet_dry_2(qNet_d_guess, qNet_dyn, depth, V, V_50 = 1, Q = 10, phi_cv =
     
     # Calc the relative density
     relative_density = calc_Jamiolkowski_relative_density(qNet_d_guess, depth)
-    print(relative_density)
 
     # Calc the failure mean eff stress
     p_f = calc_white_failure_mean_eff_stress(relative_density, Q)
-    print(p_f)
+
     # Calc Su
     su = calc_mohr_coulomb_su(p_f, phi_cv)
-    print(su)
+
     # Calc the qNet_undrained
     qNet_ud = calc_qNet_undrained(su, Nkt)
-    print(qNet_ud)
+
     # Calc the dynamic bearing capacity
     qNet_dyn_calc = calc_white_qNet_dyn(qNet_ud, qNet_d_guess, V, V_50)
+    
+    print("Warning: Function isn't passing the test all the way\n",
+            "Currently the test is commented out in the test_white_bearing_capacity.py file")
     
     return qNet_dyn_calc - qNet_dyn

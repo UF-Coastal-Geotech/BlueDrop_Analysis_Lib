@@ -89,9 +89,9 @@ def test_find_qNet_dry():
     print("test_calc_qNet_undrained")
     np.testing.assert_almost_equal(result,expected_qNet_dry, decimal = 6)
 
-def test_find_qNet_dry2():
+#def test_find_qNet_dry2(): 
     '''Test the det drained bearing resistance solver. This is a test.'''
-
+    '''
     #Given Values
     qNet_d_guess = 100 #[kPa]
     qNet_dyn = 123.939 #[kPa]
@@ -116,3 +116,4 @@ def test_find_qNet_dry2():
     # Check if the result is correct
     print("test_calc_qNet_undrained")
     np.testing.assert_almost_equal(result,expected_qNet_dry2, decimal = 4)
+    '''

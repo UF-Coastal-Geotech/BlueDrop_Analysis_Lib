@@ -16,7 +16,7 @@ def test_calc_Albatal_rel_density():
     max_deceleration = 55 #[g's]
 
     # Expected result
-    expected_Albatal_density = 78.2128 # [m^2]
+    expected_Albatal_density = 78.2128
 
     # Call the function
     result = calc_Albatal_rel_density(max_deceleration)
@@ -42,7 +42,7 @@ def test_calc_Jamiolkowski_relative_density():
     k0 = 0.5
 
     # Expected result
-    expected_Jamiolkowski_density =  -0.694309 #[%0]
+    expected_Jamiolkowski_density =  -0.694309
 
     # Call the function
     result = calc_Jamiolkowski_relative_density(qNet_dry, depth, soil_unit_wt = 17.81, water_unit_wt = 9.81, C0 = 300, C1 = 0.46, C2 = 2.96, k0 = 0.5)

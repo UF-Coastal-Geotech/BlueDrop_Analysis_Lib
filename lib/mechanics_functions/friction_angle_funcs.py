@@ -60,8 +60,11 @@ def calc_Duncan_friction_angle(relative_density, unit_weight, max_depth, coeff =
 
     sigma = unit_weight  * max_depth
 
-    phi = np.around(A + (B  * (relative_density/100)) - (C + D * (relative_density/100)) *  (np.log10(sigma/atmospheric_pressure)),decimals = 4)
-
+    f1 = A + (B  * (relative_density/100))
+    f2 = (C + D * (relative_density/100))
+    f3 = np.log10(sigma/atmospheric_pressure)
+    phi = np.around(f1 - f2 * f3, decimals = 4)
+   
     return phi
 
 

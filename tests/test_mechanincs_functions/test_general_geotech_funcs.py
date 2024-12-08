@@ -18,7 +18,7 @@ def test_calc_consolidation_coeff():
 
     diameter = 0.2 #[m]
     t_50 = 3 #[s]
-    T_50 = 0.6 #[s]
+    T_50 = 0.6
 
     # Expected result
     expected_consolidation_coefficient = 0.008 # [m^2]
