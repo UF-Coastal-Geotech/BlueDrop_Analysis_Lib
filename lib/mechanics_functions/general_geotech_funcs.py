@@ -47,7 +47,7 @@ def calc_consolidation_coeff(diameter, t_50, T_50 = 0.6):
     
     """
 
-    return diameter**2 * T_50/t_50
+    return ((diameter**2) * T_50)/t_50
 
 def calc_dimensionless_velocity(v, D, coeff_consolidation):
     """
@@ -203,6 +203,38 @@ def calc_mohr_coulomb_su(failure_mean_eff_stress, phi_cv = 32):
     inside = 6 * np.sin(phi_cv)/( 3 - np.sin(phi_cv))
 
     return 0.5 * failure_mean_eff_stress * inside
+
+def calc_Jaky_at_rest(phi_prime):
+    """
+    Calculate at rest earth pressure coefficient (k_{0}) using Jaky relationship.
+
+    Parameters
+    ----------
+
+    phi_prime : float
+        Effective friction angle [degrees].
+
+    Returns
+    -------
+
+    float
+        Coefficient of At Rest Lateral Earth Pressure
+
+    Notes
+    -----
+
+    The coefficient of at rest lateral earth pressure is calculated using the equation:
+    
+    .. math::
+        
+
+    where:
+        - :math:`k_{0}`     : Coefficient of At Rest Lateral Earth Pressure
+        - :math:\\phi_prime`      : Effective friction angle
+
+    """
+
+    return 1 - (np.sin(phi_prime*(np.pi/180)))
 
 """
 TODO: These are the functions that I want to add:
