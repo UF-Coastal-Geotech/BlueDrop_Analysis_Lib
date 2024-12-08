@@ -142,6 +142,8 @@ class pffpDataFolder(Folder):
         # Select those columns of the df
         self.calibration_params = data[["Sensor", offset_string, scale_string]]
 
+        # TODO: Might be able to add another column here for the horizontal offset
+        
     def store_pffp_files(self, recursive = False, subfolder = ""):
         """
         Store PFFP binary files found in the directory.
@@ -354,6 +356,7 @@ class pffpDataFolder(Folder):
             
             # Set a min time in the case the calculation happens really quickly
             time_left = max((end_time - start_time) * self.num_drop_files - (i+1), 1e-6)
+            
             # Print a progress bar
             progress_bar(i+1, num_files, time_left)
 
