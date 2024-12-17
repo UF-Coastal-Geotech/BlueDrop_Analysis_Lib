@@ -94,8 +94,6 @@ def calc_qNet_dyn_at_vel(qNet_d_guess,  qNet_dyn, depth, relative_density, measu
                                         measured_velocity=0.05, coeff_consolidation=1e-6,
                                         V_50=1.5, Q=15, wanted_velocity=0.02, probe_diameter=0.05, 
                                         phi_cv=30, Nkt=10, calc_relative_density=True)
-    >>> print(qNet_dyn)
-    1100.34  # example output
 
     """
 

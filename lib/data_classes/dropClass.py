@@ -1282,7 +1282,8 @@ class Drop:
             plt.tight_layout()
             plt.show()
 
-    def quick_view_impulse_selection(self, offset = 20, legend = True, draw_line = True, line_val = 0):
+    def quick_view_impulse_selection(self, offset = 20, legend = True, draw_line = True, line_val = 0, 
+                                     fig = None, axs = None, figsize = (6, 4), show = True):
         """
         Provide a quick view of the impulse selection data, comparing release data with impulse data.
 
@@ -1310,24 +1311,29 @@ class Drop:
         - The plot uses Matplotlib to show the release data as a line plot and the impulse data as a scatter plot.
         """
         
+        if fig is None and axs is None:
+            fig, axs = plt.subplots(nrows = 1, ncols = 1, figsize = figsize)
+
         start = self.drop_indices["start_impulse_index"] - offset
         end = self.drop_indices["end_impulse_index"]
 
-        plt.plot(self.release_df["Time"].loc[start:end], self.release_df["accel"].loc[start:end], color = "blue", label= "release")
-        plt.scatter(self.impulse_df["Time"], self.impulse_df["accel"], color = "red", label = "impulse")
+        axs.plot(self.release_df["Time"].loc[start:end], self.release_df["accel"].loc[start:end], color = "blue", label= "release")
+        axs.scatter(self.impulse_df["Time"], self.impulse_df["accel"], color = "red", label = "impulse")
 
         time_units = self.units["Time"]
         accel_units = self.units["accel"]
 
-        plt.xlabel(f" Time ({time_units}) ")
-        plt.ylabel(f"Acceleration ({accel_units})")
+        axs.set_xlabel(rf" Time ($\mathrm{{{time_units}}}$)")
+        axs.set_ylabel(rf"Acceleration ($\mathrm{{{accel_units}}}$)")
 
         if draw_line:
-            plt.axhline(y = line_val)
+            axs.axhline(y = line_val)
         if legend:
-            plt.legend()
+            axs.legend()
         
-        plt.show()
+        # Flag for showing the figure this means the figure isn't available for saving
+        if show:
+            plt.show()
 
     # Outputting functions
     def output_impulse_data(self, folder_dir = "", file_name = None, index = False):

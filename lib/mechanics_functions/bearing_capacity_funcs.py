@@ -311,7 +311,9 @@ def calc_qs_bearing_capacity(velocity, strainrateCorrectionType, qDyn, k_factor 
         case "invHyperSin":
             # Inv hyperbolic sin correction factor following Stephan (2015) and Randolph (2004)
             f_SR = 1 + k_factor/np.log(10) * np.arcsinh(velocity / ref_velocity)
-
+        case "powerLaw":
+            # Power law for the strain rate factor. Reference in Jaber (10.1061/JGGEFK.GTENG-11013) equation (12)
+            f_SR = (velocity/ref_velocity)**k_factor
         case _:
             ValueError("strainrateCorrectionType must be one of the folliwng: log, Brilli, invHyperSin.")
 

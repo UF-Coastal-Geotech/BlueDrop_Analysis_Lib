@@ -437,7 +437,6 @@ class pffpFile(BinaryFile):
         # Create the drop
         drop = Drop(containing_file= self.file_name, peak_index = peak_index, file_drop_index= file_drop_index, peak_info = peak_info, pressure_check = pressure_check)
 
-
         # Need to add the time data so that the manual selection works
         drop.time= df["Time"]
 
@@ -451,18 +450,20 @@ class pffpFile(BinaryFile):
         self.insert_drop(drop, index = file_drop_index -1)
 
         # Loop over the drops and make sure the drop index is set to the right order
-        self.reset_drop_index()
+        self.reset_drop_index(reset_type = "normal")
 
     def reset_drop_index(self, reset_type = "normal"):
         """
         Loop over the drops and reset the file indices
         """
+        # List that contains the strings that correspond to the possible ways to reorder the drop indices
         allowed_reset_types = ["normal"]
 
         # check if the 
         if reset_type in allowed_reset_types:
             match reset_type:
                 case "normal":
+                    # Normal reset just iterates the drops and sets the file_drop_index to be the order + 1 
                     for i, drop in enumerate(self.drops):
                         drop.file_drop_index = i+1
                 case _:
@@ -1009,7 +1010,8 @@ class pffpFile(BinaryFile):
     def plot_drop_impulses(self, figsize = [4,6], save_figs = False, hold = False, legend = True,
                             colors = ["black", "blue", "green", "orange", "purple", "brown"],
                             units = {"Time":"s", "accel":"g", "velocity":"m/s", "displacement":"cm"},
-                            line_style = ["solid", "dashed"]):        
+                            line_style = ["solid", "dashed"], 
+                            return_figs = False):        
         """
         Plot the standard velocity and acceleration versus displacement plots for all processed drops.
 
@@ -1044,7 +1046,10 @@ class pffpFile(BinaryFile):
         # Set all of the line colors to black if hold is on
         if not hold:
             colors = ["black"] * self.num_drops
-            
+        
+        # TODO: Temp solution to store figures so that they can be returned
+        fig_list = []
+        
         # Loop over the drops and plot them
 
         first_processed_drop = -1
@@ -1104,6 +1109,13 @@ class pffpFile(BinaryFile):
             if legend:
                 axs.legend()
 
+            if return_figs:
+                # Temp solution to be able to save the figure
+                fig_list.append(fig)
+        
+        if return_figs:
+            # TODO: Temp solution to return the figures. Pass figure objects in the future because that lets you format before hand  
+            return fig_list
 if __name__ == "__main__":
     # Add some testing here
     pass
