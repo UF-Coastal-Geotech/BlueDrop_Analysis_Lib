@@ -105,13 +105,14 @@ def calc_Jamiolkowski_relative_density(qNet_dry, depth, soil_unit_wt = 17.81, wa
     sigma_1 = (soil_unit_wt - water_unit_wt) * depth
 
     # Calc the horizontal effective stress
-    sigma_3  = k0 * sigma_1 
+    sigma_3  = k0 * sigma_1
+
 
     # Calc the mean effective stress
     mean_eff_stress = calc_cambridge_mean_eff_stress(sigma_1, sigma_3, sigma_3)
-
+    
     # Calc the insid of the parenthesis
-    inside = qNet_dry/(C0 * mean_eff_stress**C1)
+    inside = qNet_dry/(C0 * (mean_eff_stress**C1))
 
     # if DEBUG:
     #     print("Inside the parenthesis: {}".format(inside))
